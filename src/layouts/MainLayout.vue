@@ -15,8 +15,39 @@
         <q-btn v-if="isAuthenticated" flat label="Logout" @click="logout" />
       </q-toolbar>
     </q-header>
-    <q-drawer  v-if="isAuthenticated"  v-model="leftDrawerOpen" show-if-above bordered>
+    <q-drawer
+      v-if="isAuthenticated"
+      v-model="leftDrawerOpen"
+      show-if-above
+      bordered
+    >
       <q-list>
+        <q-item-label header class="text-grey-8"> Menú Principal </q-item-label>
+        <q-item to="/" clickable v-ripple>
+          <q-item-section avatar>
+            <q-icon name="home" />
+          </q-item-section>
+
+          <q-item-section>Inicio</q-item-section>
+        </q-item>
+
+        <q-expansion-item
+          icon="admin_panel_settings"
+          label="Administración"
+          caption="Gestión del sistema"
+        >
+          <q-list>
+            <q-item to="/users" clickable v-ripple>
+              <q-item-section avatar>
+                <q-icon name="people" />
+              </q-item-section>
+
+              <q-item-section>Usuarios</q-item-section>
+            </q-item>
+
+            <!-- Puedes agregar más opciones aquí en el futuro -->
+          </q-list>
+        </q-expansion-item>
         <q-item-label header> Essential Links </q-item-label>
         <EssentialLink
           v-for="link in linksList"
