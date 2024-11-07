@@ -14,7 +14,11 @@ export default [
       {
         path: 'login',
         component: () => import('pages/LoginPage.vue')
-      }
+      },
+      {
+        path: '/users',
+        component: () => import('pages/UserManagement.vue')
+      },
     ]
   },
   {
