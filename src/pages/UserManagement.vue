@@ -82,77 +82,111 @@
       >
         <q-card-section>
           <div class="text-h6">Editar Usuario</div>
+          <q-input v-model="editingUser.name" readonly disable />
         </q-card-section>
-
         <q-card-section>
-          <div class="row">
-            <div class="col-12">
-              <q-input v-model="editingUser.id" label="ID" readonly disable />
-            </div>
-          </div>
+          <q-tabs
+            v-model="tab"
+            dense
+            class="text-grey"
+            active-color="primary"
+            indicator-color="primary"
+            align="justify"
+          >
+            <q-tab name="general" icon="person" label="General" />
+            <q-tab name="security" icon="security" label="Seguridad" />
+          </q-tabs>
+          <q-tab-panels v-model="tab" animated>
+            <q-tab-panel name="general">
+              <!--  -->
+              <div class="row">
+                <div class="col-12">
+                  <q-input
+                    v-model="editingUser.id"
+                    label="ID"
+                    readonly
+                    disable
+                  />
+                </div>
+              </div>
+              <div class="row q-col-gutter-md">
+                <div class="col-12 row">
+                  <div class="col-12 col-md-6 q-pr-sm q-mb-sm">
+                    <q-input
+                      v-model="editingUser.name"
+                      label="Nombre"
+                      :rules="[(val) => !!val || 'El nombre es requerido']"
+                    />
+                  </div>
 
-          <div class="row q-col-gutter-md">
-            <div class="col-12 row">
-              <div class="col-12 col-md-6 q-pr-sm q-mb-sm">
-                <q-input
-                  v-model="editingUser.name"
-                  label="Nombre"
-                  :rules="[(val) => !!val || 'El nombre es requerido']"
-                />
+                  <div class="col-12 col-md-6 q-pl-sm q-mb-sm">
+                    <q-input
+                      v-model="editingUser.email"
+                      label="Correo Electrónico"
+                      :rules="[
+                        (val) => !!val || 'El correo es requerido',
+                        (val) =>
+                          /^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(val) ||
+                          'Formato de correo inválido',
+                      ]"
+                    />
+                  </div>
+                </div>
+                <div class="col-12 row">
+                  <div class="col-12 col-md-6 q-pr-sm q-mb-sm">
+                    <q-toggle
+                      v-model="editingUser.active"
+                      label="Usuario Activo"
+                    />
+                  </div>
+                  <div class="col-12 col-md-6 q-pl-sm q-mb-sm">
+                    <q-toggle
+                      v-model="editingUser.requires_password_change"
+                      label="Requiere Cambio de Contraseña"
+                    />
+                  </div>
+                </div>
+                <div class="col-12 row">
+                  <div class="col-12 col-md-6 q-pr-sm q-mb-sm">
+                    <q-input
+                      v-model="formattedEmailVerifiedAt"
+                      label="Verificación de Correo"
+                      readonly
+                      disable
+                    />
+                  </div>
+                  <div class="col-12 col-md-6 q-pl-sm q-mb-sm">
+                    <q-input
+                      v-model="formattedCreatedAt"
+                      label="Fecha de Creación"
+                      readonly
+                      disable
+                    />
+                  </div>
+                </div>
+                <div class="col-12 row">
+                  <div class="col-12 col-md-6 q-pr-sm q-mb-sm">
+                    <q-input
+                      v-model="formattedUpdatedAt"
+                      label="Última Actualización"
+                      readonly
+                      disable
+                    />
+                  </div>
+                  <div class="col-12 col-md-6"></div>
+                </div>
               </div>
-
-              <div class="col-12 col-md-6 q-pl-sm q-mb-sm">
-                <q-input
-                  v-model="editingUser.email"
-                  label="Correo Electrónico"
-                  :rules="[
-                    (val) => !!val || 'El correo es requerido',
-                    (val) => /^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(val) || 'Formato de correo inválido'
-                    ]"
-                />
+            </q-tab-panel>
+            <q-tab-panel name="security">
+              <div class="text-center q-pa-md">
+                <q-icon name="security" size="50px" color="grey-5" />
+                <p class="text-subtitle1 q-mt-md">
+                  Configuraciones de Seguridad
+                </p>
+                <p class="text-caption text-grey">Próximamente</p>
               </div>
-            </div>
-            <div class="col-12 row">
-              <div class="col-12 col-md-6 q-pr-sm q-mb-sm">
-                <q-toggle v-model="editingUser.active" label="Usuario Activo" />
-              </div>
-              <div class="col-12 col-md-6 q-pl-sm q-mb-sm">
-                <q-toggle
-                  v-model="editingUser.requires_password_change"
-                  label="Requiere Cambio de Contraseña"
-                />
-              </div>
-            </div>
-            <div class="col-12 row">
-              <div class="col-12 col-md-6 q-pr-sm q-mb-sm">
-                <q-input
-                  v-model="formattedEmailVerifiedAt"
-                  label="Verificación de Correo"
-                  readonly
-                  disable
-                />
-              </div>
-              <div class="col-12 col-md-6 q-pl-sm q-mb-sm">
-                <q-input
-                  v-model="formattedCreatedAt"
-                  label="Fecha de Creación"
-                  readonly
-                  disable
-                />
-              </div>
-            </div>
-            <div class="col-12 row">
-              <div class="col-12 col-md-6 q-pr-sm q-mb-sm">
-                <q-input
-                  v-model="formattedUpdatedAt"
-                  label="Última Actualización"
-                  readonly
-                  disable
-                />
-              </div>
-              <div class="col-12 col-md-6"></div>
-            </div>
-          </div>
+            </q-tab-panel>
+          </q-tab-panels>
         </q-card-section>
         <q-card-actions align="right">
           <q-btn label="Cancelar" color="negative" flat v-close-popup />
@@ -175,20 +209,23 @@ export default {
     const loading = ref(false);
     const editDialog = ref(false);
     const editingUser = ref({});
+    const tab = ref("general");
 
     // Función para formatear fechas
     const formatDate = (dateString) => {
-      if (!dateString) return '';
+      if (!dateString) return "";
       const date = new Date(dateString);
-      return date.toLocaleString('es-ES', {
-        day: '2-digit',
-        month: '2-digit',
-        year: 'numeric',
-        hour: '2-digit',
-        minute: '2-digit',
-        second: '2-digit',
-        hour12: false
-      }).replace(',', ' ');
+      return date
+        .toLocaleString("es-ES", {
+          day: "2-digit",
+          month: "2-digit",
+          year: "numeric",
+          hour: "2-digit",
+          minute: "2-digit",
+          second: "2-digit",
+          hour12: false,
+        })
+        .replace(",", " ");
     };
 
     const fetchUsers = async () => {
@@ -239,7 +276,7 @@ export default {
           },
         });
 
-        editingUser .value = response.data.usuario;
+        editingUser.value = response.data.usuario;
         editDialog.value = true;
       } catch (error) {
         console.error("Error fetching user details:", error);
@@ -251,10 +288,10 @@ export default {
       }
     };
 
-    const updateUser  = async () => {
+    const updateUser = async () => {
       try {
         const token = localStorage.getItem("accessToken");
-        await api.put(`users/${editingUser .value.id}`, editingUser .value, {
+        await api.put(`users/${editingUser.value.id}`, editingUser.value, {
           headers: {
             Authorization: `Bearer ${token}`,
             Accept: "application/json",
@@ -308,15 +345,22 @@ export default {
       users,
       loading,
       editDialog,
-      editingUser ,
+      editingUser,
       showEditDialog,
-      updateUser ,
+      updateUser,
       showDeleteDialog,
       showAddDialog,
       formatDate,
-      formattedEmailVerifiedAt: computed(() => formatDate(editingUser .value.email_verified_at)),
-      formattedCreatedAt: computed(() => formatDate(editingUser .value.created_at)),
-      formattedUpdatedAt: computed(() => formatDate(editingUser .value.updated_at)),
+      formattedEmailVerifiedAt: computed(() =>
+        formatDate(editingUser.value.email_verified_at)
+      ),
+      formattedCreatedAt: computed(() =>
+        formatDate(editingUser.value.created_at)
+      ),
+      formattedUpdatedAt: computed(() =>
+        formatDate(editingUser.value.updated_at)
+      ),
+      tab,
     };
   },
   data() {

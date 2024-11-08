@@ -5,6 +5,7 @@ module.exports = configure(function (/* ctx */) {
   return {
     framework: {
       plugins: ["Dialog", "Notify"],
+      components: ["QTabs", "QTab", "QTabPanel", "QTabPanels"],
     },
     boot: ["axios"],
     css: ["app.scss"],

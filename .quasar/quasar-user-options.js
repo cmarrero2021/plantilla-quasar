@@ -13,9 +13,9 @@
 
 
 
-import {Dialog,Notify} from 'quasar'
+import {QTabs,QTab,QTabPanel,QTabPanels,Dialog,Notify} from 'quasar'
 
 
 
-export default { config: {},plugins: {Dialog,Notify} }
+export default { config: {},components: {QTabs,QTab,QTabPanel,QTabPanels},plugins: {Dialog,Notify} }
 
