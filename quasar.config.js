@@ -4,14 +4,11 @@ dotenv.config();
 module.exports = configure(function (/* ctx */) {
   return {
     framework: {
-      plugins: ["Dialog"],
+      plugins: ["Dialog", "Notify"],
     },
     boot: ["axios"],
     css: ["app.scss"],
-    extras: [
-      "roboto-font",
-      "material-icons",
-    ],
+    extras: ["roboto-font", "material-icons"],
     build: {
       target: {
         browser: ["es2019", "edge88", "firefox78", "chrome87", "safari13.1"],
@@ -40,9 +37,7 @@ module.exports = configure(function (/* ctx */) {
     ssr: {
       pwa: false,
       prodPort: 3000,
-      middlewares: [
-        "render",
-      ],
+      middlewares: ["render"],
     },
 
     pwa: {
@@ -52,16 +47,14 @@ module.exports = configure(function (/* ctx */) {
       manifestFilename: "manifest.json",
       useCredentialsForManifestTag: false,
     },
-    cordova: {
-    },
+    cordova: {},
     capacitor: {
       hideSplashscreen: true,
     },
     electron: {
       inspectPort: 5858,
       bundler: "packager",
-      packager: {
-      },
+      packager: {},
       builder: {
         appId: "quasar-login",
       },
