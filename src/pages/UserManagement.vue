@@ -291,7 +291,7 @@ export default {
     const updateUser = async () => {
       try {
         const token = localStorage.getItem("accessToken");
-        await api.put(`users/${editingUser.value.id}`, editingUser.value, {
+        await api.post(`users/${editingUser.value.id}`, editingUser.value, {
           headers: {
             Authorization: `Bearer ${token}`,
             Accept: "application/json",
