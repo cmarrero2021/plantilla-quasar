@@ -1,42 +1,108 @@
 <template>
   <q-page padding>
     <!-- Breadcrumbs y encabezado anteriores -->
-    <q-table :rows="users" :columns="columns" row-key="id" :loading="loading">
+    <q-breadcrumbs>
+      <q-breadcrumbs-el label="Inicio" to="/" />
+      <q-breadcrumbs-el label="Administración" />
+      <q-breadcrumbs-el label="Usuarios" />
+    </q-breadcrumbs>
+    <div class="row q-mb-md items-center">
+      <q-icon name="people" size="md" class="q-mr-md" />
+      <h4 class="q-ma-none">Gestión de Usuarios</h4>
+    </div>
+    <div class="row justify-end q-mb-md">
+      <q-btn
+        color="positive"
+        icon="add"
+        icon-right="person"
+        @click="showAddDialog"
+      >
+        <q-tooltip anchor="bottom middle" self="top right" class="bg-green">
+          Agregar usuario
+        </q-tooltip>
+      </q-btn>
+    </div>
+    <q-table
+      :rows="users"
+      :columns="columns"
+      row-key="id"
+      :loading="loading"
+      dense
+      class="my-sticky-last-column-table"
+    >
       <!-- Mantener el slot de acciones original -->
       <template v-slot:body-cell-actions="props">
-        <q-td :props="props">
-          <q-btn
-            icon="edit"
-            flat
-            color="primary"
-            @click="showEditDialog(props.row)"
-          />
-          <q-btn
-            v-if="props.row.name !== 'Admin'"
-            icon="delete"
-            flat
-            color="negative"
-            @click="showDeleteDialog(props.row)"
-          />
+        <q-td
+          :props="props"
+          class="q-pa-xs"
+          style="width: 110px; max-width: 110px"
+        >
+          <div class="row no-wrap">
+            <q-btn
+              icon="edit"
+              flat
+              color="primary"
+              @click="showEditDialog(props.row)"
+              class="q-mr-xs"
+            >
+              <q-tooltip
+                class="bg-primary"
+                anchor="bottom middle"
+                self="top middle"
+                :offset="[10, 10]"
+              >
+                Editar Usuario
+              </q-tooltip>
+            </q-btn>
+            <q-btn
+              v-if="props.row.name !== 'Admin'"
+              icon="delete"
+              flat
+              color="negative"
+              @click="showDeleteDialog(props.row)"
+            >
+              <q-tooltip
+                class="bg-red"
+                anchor="bottom middle"
+                self="top middle"
+                :offset="[10, 10]"
+              >
+                Eliminar Usuario
+              </q-tooltip>
+            </q-btn>
+          </div>
         </q-td>
       </template>
     </q-table>
 
     <!-- Botón de Agregar Usuario -->
-    <q-btn color="positive" label="Agregar Usuario" @click="showAddDialog" />
+    <!-- <q-btn color="positive" label="Agregar Usuario" @click="showAddDialog" /> -->
 
     <!-- Diálogo de Edición de Usuario -->
-    <!-- <q-dialog v-model="editDialog" persistent>
-      <q-card style="min-width: 700px">
+
+    <q-dialog v-model="editDialog" persistent>
+      <q-card
+        :style="{
+          minWidth: $q.screen.width < 600 ? '95vw' : '700px',
+
+          width: $q.screen.width < 600 ? '95vw' : 'auto',
+        }"
+      >
         <q-card-section>
           <div class="text-h6">Editar Usuario</div>
         </q-card-section>
+
         <q-card-section>
+          <!-- ID en una fila completa -->
+
           <div class="row">
             <div class="col-12">
               <q-input v-model="editingUser.id" label="ID" readonly disable />
             </div>
           </div>
+
+          <!-- Resto de campos en dos columnas -->
+
           <div class="row q-col-gutter-md">
             <div class="col-12 row">
               <div class="col-12 col-md-6 q-pr-sm q-mb-sm">
@@ -46,7 +112,8 @@
                   :rules="[(val) => !!val || 'El nombre es requerido']"
                 />
               </div>
-              <div class="col-12 col-md-6 q-pr-sm q-mb-sm">
+
+              <div class="col-12 col-md-6 q-pl-sm q-mb-sm">
                 <q-input
                   v-model="editingUser.email"
                   label="Correo Electrónico"
@@ -54,8 +121,9 @@
                 />
               </div>
             </div>
+
             <div class="col-12 row">
-              <div class="col-6 q-pr-sm">
+              <div class="col-12 col-md-6 q-pr-sm q-mb-sm">
                 <q-input
                   v-model="formattedEmailVerifiedAt"
                   label="Verificación de Correo"
@@ -63,18 +131,21 @@
                   disable
                 />
               </div>
-              <div class="col-6 q-pl-sm">
+
+              <div class="col-12 col-md-6 q-pl-sm q-mb-sm">
                 <q-toggle
                   v-model="editingUser.requires_password_change"
                   label="Requiere Cambio de Contraseña"
                 />
               </div>
             </div>
+
             <div class="col-12 row">
-              <div class="col-6 q-pr-sm">
+              <div class="col-12 col-md-6 q-pr-sm q-mb-sm">
                 <q-toggle v-model="editingUser.active" label="Usuario Activo" />
               </div>
-              <div class="col-6 q-pl-sm">
+
+              <div class="col-12 col-md-6 q-pl-sm q-mb-sm">
                 <q-input
                   v-model="formattedCreatedAt"
                   label="Fecha de Creación"
@@ -83,8 +154,9 @@
                 />
               </div>
             </div>
+
             <div class="col-12 row">
-              <div class="col-6 q-pr-sm">
+              <div class="col-12 col-md-6 q-pr-sm q-mb-sm">
                 <q-input
                   v-model="formattedUpdatedAt"
                   label="Última Actualización"
@@ -92,223 +164,21 @@
                   disable
                 />
               </div>
-              <div class="col-6"></div>
+
+              <!-- Columna vacía para mantener el balance -->
+
+              <div class="col-12 col-md-6"></div>
             </div>
           </div>
         </q-card-section>
-        <q-card-actions align="right">
+
+        <q-card-actions align="left">
           <q-btn label="Cancelar" color="negative" flat v-close-popup />
+
           <q-btn label="Aceptar" color="primary" @click="updateUser" />
         </q-card-actions>
       </q-card>
-    </q-dialog> -->
-    <q-dialog v-model="editDialog" persistent>
-
-<q-card
-
-  :style="{
-
-    minWidth: $q.screen.width < 600 ? '95vw' : '700px',
-
-    width: $q.screen.width < 600 ? '95vw' : 'auto'
-
-  }"
-
->
-
-  <q-card-section>
-
-    <div class="text-h6">Editar Usuario</div>
-
-  </q-card-section>
-
-
-  <q-card-section>
-
-    <!-- ID en una fila completa -->
-
-    <div class="row">
-
-      <div class="col-12">
-
-        <q-input
-
-          v-model="editingUser.id"
-
-          label="ID"
-
-          readonly
-
-          disable
-
-        />
-
-      </div>
-
-    </div>
-
-
-    <!-- Resto de campos en dos columnas -->
-
-    <div class="row q-col-gutter-md">
-
-      <div class="col-12 row">
-
-        <div class="col-12 col-md-6 q-pr-sm q-mb-sm">
-
-          <q-input
-
-            v-model="editingUser.name"
-
-            label="Nombre"
-
-            :rules="[val => !!val || 'El nombre es requerido']"
-
-          />
-
-        </div>
-
-        <div class="col-12 col-md-6 q-pl-sm q-mb-sm">
-
-          <q-input
-
-            v-model="editingUser.email"
-
-            label="Correo Electrónico"
-
-            :rules="[val => !!val || 'El correo es requerido']"
-
-          />
-
-        </div>
-
-      </div>
-
-
-      <div class="col-12 row">
-
-        <div class="col-12 col-md-6 q-pr-sm q-mb-sm">
-
-          <q-input
-
-            v-model="formattedEmailVerifiedAt"
-
-            label="Verificación de Correo"
-
-            readonly
-
-            disable
-
-          />
-
-        </div>
-
-        <div class="col-12 col-md-6 q-pl-sm q-mb-sm">
-
-          <q-toggle
-
-            v-model="editingUser.requires_password_change"
-
-            label="Requiere Cambio de Contraseña"
-
-          />
-
-        </div>
-
-      </div>
-
-
-      <div class="col-12 row">
-
-        <div class="col-12 col-md-6 q-pr-sm q-mb-sm">
-
-          <q-toggle
-
-            v-model="editingUser.active"
-
-            label="Usuario Activo"
-
-          />
-
-        </div>
-
-        <div class="col-12 col-md-6 q-pl-sm q-mb-sm">
-
-          <q-input
-
-            v-model="formattedCreatedAt"
-
-            label="Fecha de Creación"
-
-            readonly
-
-            disable
-
-          />
-
-        </div>
-
-      </div>
-
-
-      <div class="col-12 row">
-
-        <div class="col-12 col-md-6 q-pr-sm q-mb-sm">
-
-          <q-input
-
-            v-model="formattedUpdatedAt"
-
-            label="Última Actualización"
-
-            readonly
-
-            disable
-
-          />
-
-        </div>
-
-        <!-- Columna vacía para mantener el balance -->
-
-        <div class="col-12 col-md-6"></div>
-
-      </div>
-
-    </div>
-
-  </q-card-section>
-
-
-  <q-card-actions align="left">
-
-    <q-btn
-
-      label="Cancelar"
-
-      color="negative"
-
-      flat
-
-      v-close-popup
-
-    />
-
-    <q-btn
-
-      label="Aceptar"
-
-      color="primary"
-
-      @click="updateUser"
-
-    />
-
-  </q-card-actions>
-
-</q-card>
-
-</q-dialog>
+    </q-dialog>
   </q-page>
 </template>
 
@@ -324,7 +194,6 @@ export default {
     const loading = ref(false);
     const editDialog = ref(false);
     const editingUser = ref({});
-
     const fetchUsers = async () => {
       loading.value = true;
       try {
@@ -479,8 +348,10 @@ export default {
         {
           name: "actions",
           label: "Acciones",
-          align: "center",
+          align: "left",
           field: "actions",
+          sortable: false,
+          style: "width: 110px; max-width: 110px;",
         },
       ],
     };
@@ -492,13 +363,28 @@ export default {
 /* Aquí puedes agregar estilos específicos para tu componente */
 
 @media (max-width: 599px) {
-
-.q-dialog__inner--minimized {
-
-  padding: 0 !important;
-
+  .q-dialog__inner--minimized {
+    padding: 0 !important;
+    color: rgb(234, 236, 236);
+  }
 }
+</style>
+<style lang="sass">
+.my-sticky-last-column-table
+  /* specifying max-width so the example can
+    highlight the sticky column on any browser window */
+  /*max-width: 600px*/
 
-}
+  thead tr:last-child th:last-child
+    /* bg color is important for th; just specify one */
+    background-color: rgb(234, 236, 236)
 
+  td:last-child
+    background-color: rgb(234, 236, 236)
+
+  th:last-child,
+  td:last-child
+    position: sticky
+    right: 0
+    z-index: 1
 </style>
