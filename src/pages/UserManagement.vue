@@ -1,6 +1,5 @@
 <template>
   <q-page padding>
-    <!-- Breadcrumbs y encabezado anteriores -->
     <q-breadcrumbs>
       <q-breadcrumbs-el label="Inicio" to="/" />
       <q-breadcrumbs-el label="Administración" />
@@ -28,9 +27,8 @@
       row-key="id"
       :loading="loading"
       dense
-      class="my-sticky-last-column-table"
+      class="fijar-acciones"
     >
-      <!-- Mantener el slot de acciones original -->
       <template v-slot:body-cell-actions="props">
         <q-td
           :props="props"
@@ -75,16 +73,10 @@
       </template>
     </q-table>
 
-    <!-- Botón de Agregar Usuario -->
-    <!-- <q-btn color="positive" label="Agregar Usuario" @click="showAddDialog" /> -->
-
-    <!-- Diálogo de Edición de Usuario -->
-
     <q-dialog v-model="editDialog" persistent>
       <q-card
         :style="{
           minWidth: $q.screen.width < 600 ? '95vw' : '700px',
-
           width: $q.screen.width < 600 ? '95vw' : 'auto',
         }"
       >
@@ -93,15 +85,11 @@
         </q-card-section>
 
         <q-card-section>
-          <!-- ID en una fila completa -->
-
           <div class="row">
             <div class="col-12">
               <q-input v-model="editingUser.id" label="ID" readonly disable />
             </div>
           </div>
-
-          <!-- Resto de campos en dos columnas -->
 
           <div class="row q-col-gutter-md">
             <div class="col-12 row">
@@ -117,11 +105,24 @@
                 <q-input
                   v-model="editingUser.email"
                   label="Correo Electrónico"
-                  :rules="[(val) => !!val || 'El correo es requerido']"
+                  :rules="[
+                    (val) => !!val || 'El correo es requerido',
+                    (val) => /^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(val) || 'Formato de correo inválido'
+                    ]"
                 />
               </div>
             </div>
-
+            <div class="col-12 row">
+              <div class="col-12 col-md-6 q-pr-sm q-mb-sm">
+                <q-toggle v-model="editingUser.active" label="Usuario Activo" />
+              </div>
+              <div class="col-12 col-md-6 q-pl-sm q-mb-sm">
+                <q-toggle
+                  v-model="editingUser.requires_password_change"
+                  label="Requiere Cambio de Contraseña"
+                />
+              </div>
+            </div>
             <div class="col-12 row">
               <div class="col-12 col-md-6 q-pr-sm q-mb-sm">
                 <q-input
@@ -131,20 +132,6 @@
                   disable
                 />
               </div>
-
-              <div class="col-12 col-md-6 q-pl-sm q-mb-sm">
-                <q-toggle
-                  v-model="editingUser.requires_password_change"
-                  label="Requiere Cambio de Contraseña"
-                />
-              </div>
-            </div>
-
-            <div class="col-12 row">
-              <div class="col-12 col-md-6 q-pr-sm q-mb-sm">
-                <q-toggle v-model="editingUser.active" label="Usuario Activo" />
-              </div>
-
               <div class="col-12 col-md-6 q-pl-sm q-mb-sm">
                 <q-input
                   v-model="formattedCreatedAt"
@@ -154,7 +141,6 @@
                 />
               </div>
             </div>
-
             <div class="col-12 row">
               <div class="col-12 col-md-6 q-pr-sm q-mb-sm">
                 <q-input
@@ -164,17 +150,12 @@
                   disable
                 />
               </div>
-
-              <!-- Columna vacía para mantener el balance -->
-
               <div class="col-12 col-md-6"></div>
             </div>
           </div>
         </q-card-section>
-
-        <q-card-actions align="left">
+        <q-card-actions align="right">
           <q-btn label="Cancelar" color="negative" flat v-close-popup />
-
           <q-btn label="Aceptar" color="primary" @click="updateUser" />
         </q-card-actions>
       </q-card>
@@ -185,7 +166,7 @@
 <script>
 import { useQuasar } from "quasar";
 import { api } from "boot/axios";
-import { ref, onMounted } from "vue";
+import { ref, onMounted, computed } from "vue";
 
 export default {
   setup() {
@@ -194,6 +175,22 @@ export default {
     const loading = ref(false);
     const editDialog = ref(false);
     const editingUser = ref({});
+
+    // Función para formatear fechas
+    const formatDate = (dateString) => {
+      if (!dateString) return '';
+      const date = new Date(dateString);
+      return date.toLocaleString('es-ES', {
+        day: '2-digit',
+        month: '2-digit',
+        year: 'numeric',
+        hour: '2-digit',
+        minute: '2-digit',
+        second: '2-digit',
+        hour12: false
+      }).replace(',', ' ');
+    };
+
     const fetchUsers = async () => {
       loading.value = true;
       try {
@@ -242,7 +239,7 @@ export default {
           },
         });
 
-        editingUser.value = response.data.usuario;
+        editingUser .value = response.data.usuario;
         editDialog.value = true;
       } catch (error) {
         console.error("Error fetching user details:", error);
@@ -254,10 +251,10 @@ export default {
       }
     };
 
-    const updateUser = async () => {
+    const updateUser  = async () => {
       try {
         const token = localStorage.getItem("accessToken");
-        await api.put(`users/${editingUser.value.id}`, editingUser.value, {
+        await api.put(`users/${editingUser .value.id}`, editingUser .value, {
           headers: {
             Authorization: `Bearer ${token}`,
             Accept: "application/json",
@@ -281,7 +278,6 @@ export default {
       }
     };
 
-    // Método para mostrar diálogo de eliminación (mantener el existente)
     const showDeleteDialog = (user) => {
       $q.dialog({
         title: "Eliminar Usuario",
@@ -298,7 +294,6 @@ export default {
         });
     };
 
-    // Método para mostrar diálogo de agregar (mantener el existente)
     const showAddDialog = () => {
       $q.dialog({
         title: "Agregar Usuario",
@@ -313,11 +308,15 @@ export default {
       users,
       loading,
       editDialog,
-      editingUser,
+      editingUser ,
       showEditDialog,
-      updateUser,
+      updateUser ,
       showDeleteDialog,
       showAddDialog,
+      formatDate,
+      formattedEmailVerifiedAt: computed(() => formatDate(editingUser .value.email_verified_at)),
+      formattedCreatedAt: computed(() => formatDate(editingUser .value.created_at)),
+      formattedUpdatedAt: computed(() => formatDate(editingUser .value.updated_at)),
     };
   },
   data() {
@@ -370,18 +369,11 @@ export default {
 }
 </style>
 <style lang="sass">
-.my-sticky-last-column-table
-  /* specifying max-width so the example can
-    highlight the sticky column on any browser window */
-  /*max-width: 600px*/
-
+.fijar-acciones
   thead tr:last-child th:last-child
-    /* bg color is important for th; just specify one */
     background-color: rgb(234, 236, 236)
-
   td:last-child
     background-color: rgb(234, 236, 236)
-
   th:last-child,
   td:last-child
     position: sticky
